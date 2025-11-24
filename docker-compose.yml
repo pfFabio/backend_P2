@@ -1,0 +1,48 @@
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    working_dir: /var/www
+    env_file:
+      - ./nome-do-projeto/.env
+    volumes:
+      - ./nome-do-projeto:/var/www
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    env_file:
+      - ./nome-do-projeto/.env
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nome-do-projeto:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
