@@ -22,7 +22,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-COPY ./nome-do-projeto /var/www
+
+# 1. Copy composer files from the P2 folder
+COPY P2/composer.json P2/composer.lock ./
+
+# 2. Install dependencies (ADD --no-scripts HERE)
+RUN composer install --no-interaction --prefer-dist --no-scripts
+
+# 3. Copy the rest of the application FROM the P2 folder
+COPY P2 .
+
+# 4. Run the scripts now that the app files are present
+RUN composer dump-autoload --optimize
+
+
+# Create necessary directories
+RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www

@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.env
+.env.local
+vendor
+.DS_Store
+mysql_data
+*.sock
+storage/logs/*
+bootstrap/cache/*
